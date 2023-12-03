@@ -5,6 +5,7 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
+import javax.swing.JOptionPane;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -22,10 +23,19 @@ import java.awt.event.ActionEvent;
 import javax.swing.JTextPane;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.DataInputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.UnknownHostException;
+
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.JTextField;
 
 public class Menu extends JFrame{
 	
@@ -38,6 +48,8 @@ public class Menu extends JFrame{
 	private JPanel reglasUR;
 	private JPanel personajeUR;
 	private JPanel historialUR;
+	private JPanel esperaUR;
+	private JPanel conexionUR;
 	private int personaje;
 	private int seleccion;
 	private JLabel lblHeaderM;
@@ -48,6 +60,8 @@ public class Menu extends JFrame{
 	private JLabel lblNombrePersonaje;
 	private JLabel lblImgPersonaje;
 	private JLabel lblImgM;
+	private JTextPane textHistorial;
+	private Thread serv;
 	
 	public Menu() {
 		setResizable(false);
@@ -70,86 +84,17 @@ public class Menu extends JFrame{
 		personajeUR = new JPanel();
 		personajeUR.setVisible(false);
 		
+		conexionUR = new JPanel();
+		conexionUR.setVisible(false);
+		
+		JPanel crUR = new JPanel();
+		crUR.setVisible(false);
+		
 		menuUR = new JPanel();
 		menuUR.setVisible(false);
-		menuUR.setBackground(SystemColor.activeCaption);
-		menuUR.setBounds(0, 0, 816, 623);
-		layeredPanel.add(menuUR);
-		menuUR.setLayout(null);
 		
-		JLabel lblTituloM = new JLabel("ULTIMATE ROSHAMBO");
-		lblTituloM.setHorizontalAlignment(SwingConstants.CENTER);
-		lblTituloM.setFont(new Font("Tahoma", Font.PLAIN, 25));
-		lblTituloM.setBounds(0, -12, 816, 84);
-		menuUR.add(lblTituloM);
-		
-		lblHeaderM = new JLabel("");
-		lblHeaderM.setHorizontalAlignment(SwingConstants.LEFT);
-		lblHeaderM.setFont(new Font("Mongolian Baiti", Font.PLAIN, 40));
-		lblHeaderM.setBounds(175, 75, 631, 79);
-		menuUR.add(lblHeaderM);
-		
-		JButton btnPersonaje = new JButton("Personaje");
-		btnPersonaje.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				switchPanels(personajeUR);
-				seleccion = 1;
-				personajeSeleccionado(1);
-				
-			}
-		});
-		btnPersonaje.setFont(new Font("Tahoma", Font.PLAIN, 28));
-		btnPersonaje.setBounds(84, 194, 257, 73);
-		menuUR.add(btnPersonaje);
-		
-		JButton btnMultijugador = new JButton("Multijugador");
-		btnMultijugador.setFont(new Font("Tahoma", Font.PLAIN, 28));
-		btnMultijugador.setBounds(84, 329, 257, 73);
-		menuUR.add(btnMultijugador);
-		
-		JButton btnUnJugador = new JButton("Un jugador");
-		btnUnJugador.setFont(new Font("Tahoma", Font.PLAIN, 28));
-		btnUnJugador.setBounds(84, 472, 257, 73);
-		menuUR.add(btnUnJugador);
-		
-		JButton btnSalir = new JButton("Salir del juego");
-		btnSalir.setFont(new Font("Tahoma", Font.PLAIN, 28));
-		btnSalir.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				dispose();
-			}
-		});
-		btnSalir.setBounds(457, 472, 257, 73);
-		menuUR.add(btnSalir);
-		
-		JButton btnHistorial = new JButton("Historial");
-		btnHistorial.setFont(new Font("Tahoma", Font.PLAIN, 28));
-		btnHistorial.setBounds(457, 329, 257, 73);
-		menuUR.add(btnHistorial);
-		
-		JButton btnReglas = new JButton("Reglas");
-		btnReglas.setFont(new Font("Tahoma", Font.PLAIN, 28));
-		btnReglas.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				switchPanels(reglasUR);
-			}
-		});
-		btnReglas.setBounds(457, 194, 257, 73);
-		menuUR.add(btnReglas);
-		
-		lblImgM = new JLabel("");
-		lblImgM.setBounds(20, 20, 127, 127);
-		menuUR.add(lblImgM);
-		
-		JButton btnCambioUsuario = new JButton("Cambio de usuario");
-		btnCambioUsuario.setFont(new Font("Tahoma", Font.PLAIN, 15));
-		btnCambioUsuario.setBounds(619, 10, 165, 44);
-		menuUR.add(btnCambioUsuario);
-		btnCambioUsuario.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				switchPanels(inicioUR);
-			}
-		});
+		historialUR = new JPanel();
+		historialUR.setVisible(false);
 		
 		
 		inicioUR = new JPanel();
@@ -194,6 +139,269 @@ public class Menu extends JFrame{
 				switchPanels(menuUR);
 			}
 		});
+		historialUR.setBackground(SystemColor.activeCaption);
+		historialUR.setBounds(0, 0, 816, 623);
+		layeredPanel.add(historialUR);
+		historialUR.setLayout(null);
+		
+		JScrollPane scrollPane_1 = new JScrollPane();
+		scrollPane_1.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPane_1.setBounds(58, 102, 696, 416);
+		historialUR.add(scrollPane_1);
+		
+		textHistorial = new JTextPane();
+		textHistorial.setEditable(false);
+		textHistorial.setBounds(0, 0, 7, 19);
+		scrollPane_1.setViewportView(textHistorial);
+		
+		JLabel lblHistorial = new JLabel("HISTORIAL");
+		lblHistorial.setHorizontalAlignment(SwingConstants.CENTER);
+		lblHistorial.setFont(new Font("Tahoma", Font.PLAIN, 30));
+		lblHistorial.setBounds(0, 10, 816, 63);
+		historialUR.add(lblHistorial);
+		
+		JButton btnNewButton = new JButton("Volver al menú principal");
+		btnNewButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				switchPanels(menuUR);
+			}
+		});
+		btnNewButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		btnNewButton.setBounds(249, 544, 306, 51);
+		historialUR.add(btnNewButton);
+		menuUR.setBackground(SystemColor.activeCaption);
+		menuUR.setBounds(0, 0, 816, 623);
+		layeredPanel.add(menuUR);
+		menuUR.setLayout(null);
+		
+		JLabel lblTituloM = new JLabel("ULTIMATE ROSHAMBO");
+		lblTituloM.setHorizontalAlignment(SwingConstants.CENTER);
+		lblTituloM.setFont(new Font("Tahoma", Font.PLAIN, 25));
+		lblTituloM.setBounds(0, -12, 816, 84);
+		menuUR.add(lblTituloM);
+		
+		lblHeaderM = new JLabel("");
+		lblHeaderM.setHorizontalAlignment(SwingConstants.LEFT);
+		lblHeaderM.setFont(new Font("Mongolian Baiti", Font.PLAIN, 40));
+		lblHeaderM.setBounds(175, 75, 631, 79);
+		menuUR.add(lblHeaderM);
+		
+		JButton btnPersonaje = new JButton("Personaje");
+		btnPersonaje.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				switchPanels(personajeUR);
+				seleccion = 1;
+				personajeSeleccionado(1);
+				
+			}
+		});
+		btnPersonaje.setFont(new Font("Tahoma", Font.PLAIN, 28));
+		btnPersonaje.setBounds(84, 194, 257, 73);
+		menuUR.add(btnPersonaje);
+		
+		JButton btnMultijugador = new JButton("Multijugador");
+		btnMultijugador.setEnabled(false);
+		btnMultijugador.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				switchPanels(crUR);
+			}
+		});
+		btnMultijugador.setFont(new Font("Tahoma", Font.PLAIN, 28));
+		btnMultijugador.setBounds(84, 329, 257, 73);
+		menuUR.add(btnMultijugador);
+		
+		JButton btnUnJugador = new JButton("Un jugador");
+		btnUnJugador.setEnabled(false);
+		btnUnJugador.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				PartidaUnJugador puj = new PartidaUnJugador();
+				puj.setVisible(true);
+				puj.toFront();
+				dispose();
+			}
+		});
+		
+		btnUnJugador.setFont(new Font("Tahoma", Font.PLAIN, 28));
+		btnUnJugador.setBounds(84, 472, 257, 73);
+		menuUR.add(btnUnJugador);
+		
+		JButton btnSalir = new JButton("Salir del juego");
+		btnSalir.setFont(new Font("Tahoma", Font.PLAIN, 28));
+		btnSalir.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				dispose();
+			}
+		});
+		btnSalir.setBounds(457, 472, 257, 73);
+		menuUR.add(btnSalir);
+		
+		JButton btnHistorial = new JButton("Historial");
+		btnHistorial.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				switchPanels(historialUR);
+				try(DataInputStream dis = new DataInputStream( new FileInputStream("src/img/historialUR.txt"))){
+					String linea = dis.readLine();
+					String hist = "";
+					while(linea != null) {
+						hist = hist + linea + "\r\n";
+						linea=dis.readLine();
+					}
+					textHistorial.setText(hist);
+				} catch (FileNotFoundException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
+		btnHistorial.setFont(new Font("Tahoma", Font.PLAIN, 28));
+		btnHistorial.setBounds(457, 329, 257, 73);
+		menuUR.add(btnHistorial);
+		
+		JButton btnReglas = new JButton("Reglas");
+		btnReglas.setFont(new Font("Tahoma", Font.PLAIN, 28));
+		btnReglas.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				switchPanels(reglasUR);
+			}
+		});
+		btnReglas.setBounds(457, 194, 257, 73);
+		menuUR.add(btnReglas);
+		
+		lblImgM = new JLabel("");
+		lblImgM.setBounds(20, 20, 127, 127);
+		menuUR.add(lblImgM);
+		
+		JButton btnCambioUsuario = new JButton("Cambio de usuario");
+		btnCambioUsuario.setFont(new Font("Tahoma", Font.PLAIN, 15));
+		btnCambioUsuario.setBounds(619, 10, 165, 44);
+		menuUR.add(btnCambioUsuario);
+		btnCambioUsuario.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				switchPanels(inicioUR);
+			}
+		});
+		crUR.setBackground(SystemColor.activeCaption);
+		crUR.setBounds(0, 0, 816, 623);
+		layeredPanel.add(crUR);
+		crUR.setLayout(null);
+		
+		JLabel lblCrearUnirse = new JLabel("Crear servidor o unirse a uno");
+		lblCrearUnirse.setHorizontalAlignment(SwingConstants.CENTER);
+		lblCrearUnirse.setFont(new Font("Tahoma", Font.PLAIN, 40));
+		lblCrearUnirse.setBounds(0, 32, 816, 95);
+		crUR.add(lblCrearUnirse);
+		
+		JButton btnCrear = new JButton("Crear");
+		btnCrear.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				switchPanels(esperaUR);
+				serv = new Thread(new Runnable() {public void run() {try(ServerSocket server = new ServerSocket(999)){
+						Socket s = server.accept();
+						PartidaMultijugador pmj = new PartidaMultijugador(s,nombre,seleccion);
+						pmj.setVisible(true);
+						pmj.toFront();
+						dispose();
+					
+					} catch (IOException e2) {
+						e2.printStackTrace();
+					}}});
+				serv.start();
+			}
+		});
+		btnCrear.setFont(new Font("Tahoma", Font.BOLD, 40));
+		btnCrear.setBounds(79, 155, 275, 161);
+		crUR.add(btnCrear);
+		
+		JButton btnUnirse = new JButton("Unirse");
+		btnUnirse.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				switchPanels(conexionUR);
+			}
+		});
+		btnUnirse.setFont(new Font("Tahoma", Font.BOLD, 40));
+		btnUnirse.setBounds(429, 155, 275, 161);
+		crUR.add(btnUnirse);
+		
+		JButton btnNewButton_1 = new JButton("Volver al menú principal");
+		btnNewButton_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				switchPanels(menuUR);
+			}
+		});
+		btnNewButton_1.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		btnNewButton_1.setBounds(247, 400, 292, 68);
+		crUR.add(btnNewButton_1);
+		conexionUR.setBackground(SystemColor.activeCaption);
+		conexionUR.setBounds(0, 0, 816, 623);
+		layeredPanel.add(conexionUR);
+		conexionUR.setLayout(null);
+		
+		JLabel lblIntroduceIP = new JLabel("Introduce la ip a la que te quieres unir:");
+		lblIntroduceIP.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		lblIntroduceIP.setBounds(205, 205, 409, 60);
+		conexionUR.add(lblIntroduceIP);
+		
+		textIP = new JTextField();
+		textIP.setBounds(198, 264, 370, 38);
+		conexionUR.add(textIP);
+		textIP.setColumns(10);
+		
+		JButton btnConectar = new JButton("Conectar");
+		btnConectar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try{
+					Socket s = new Socket(textIP.getText(),999);
+					PartidaMultijugador pmj = new PartidaMultijugador(s,nombre,seleccion);
+					pmj.setVisible(true);
+					pmj.toFront();
+					dispose();
+					
+				} catch (UnknownHostException e1) {
+					JOptionPane.showMessageDialog(null,"Conexión no válida");
+				} catch (IOException e2) {
+					JOptionPane.showMessageDialog(null,"Esta IP no está corriendo el juego");
+				}
+			}
+		});
+		btnConectar.setFont(new Font("Tahoma", Font.PLAIN, 25));
+		btnConectar.setBounds(273, 322, 223, 38);
+		conexionUR.add(btnConectar);
+		
+		JButton btnVolver = new JButton("Volver al menú principal");
+		btnVolver.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				switchPanels(menuUR);
+			}
+		});
+		btnVolver.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		btnVolver.setBounds(240, 458, 291, 48);
+		conexionUR.add(btnVolver);
+		
+		esperaUR = new JPanel();
+		esperaUR.setVisible(false);
+		esperaUR.setBackground(SystemColor.activeCaption);
+		esperaUR.setBounds(0, 0, 816, 623);
+		layeredPanel.add(esperaUR);
+		esperaUR.setLayout(null);
+		
+		JLabel lbEsperando = new JLabel("Esperando a tu contrincante...");
+		lbEsperando.setHorizontalAlignment(SwingConstants.CENTER);
+		lbEsperando.setFont(new Font("Tahoma", Font.PLAIN, 40));
+		lbEsperando.setBounds(0, 228, 816, 77);
+		esperaUR.add(lbEsperando);
+		
+		JButton btnVolverE = new JButton("Volver al menú principal");
+		btnVolverE.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				switchPanels(menuUR);
+			}
+		});
+		btnVolverE.setFont(new Font("Tahoma", Font.PLAIN, 30));
+		btnVolverE.setBounds(209, 455, 378, 51);
+		esperaUR.add(btnVolverE);
 		personajeUR.setBackground(SystemColor.activeCaption);
 		personajeUR.setBounds(0, 0, 816, 623);
 		layeredPanel.add(personajeUR);
@@ -239,6 +447,8 @@ public class Menu extends JFrame{
 		btnSeleccionar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				cambioHeaderMenu();
+				btnUnJugador.setEnabled(true);
+				btnMultijugador.setEnabled(true);
 				switchPanels(menuUR);
 			}
 		});
@@ -343,15 +553,11 @@ public class Menu extends JFrame{
 			}
 		});
 		
-		historialUR = new JPanel();
-		historialUR.setBounds(0, 0, 816, 623);
-		layeredPanel.add(historialUR);
-		historialUR.setLayout(null);
-		
 
 	}
 	
 	private static final long serialVersionUID = 1L;
+	private JTextField textIP;
 
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {

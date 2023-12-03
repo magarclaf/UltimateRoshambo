@@ -1,5 +1,7 @@
 package roshambo;
 
-public class PartidaUnJugador {
+import javax.swing.JFrame;
+
+public class PartidaUnJugador extends JFrame{
 
 }
