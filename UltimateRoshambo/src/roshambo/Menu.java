@@ -13,6 +13,18 @@ import java.awt.Color;
 import javax.swing.ImageIcon;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+
 import javax.swing.JPanel;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -24,6 +36,7 @@ import javax.swing.JTextPane;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.io.DataInputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -36,6 +49,7 @@ import javax.swing.Icon;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.JTextField;
+
 
 public class Menu extends JFrame{
 	
@@ -50,6 +64,7 @@ public class Menu extends JFrame{
 	private JPanel historialUR;
 	private JPanel esperaUR;
 	private JPanel conexionUR;
+	private JPanel dtdUR;
 	private int personaje;
 	private int seleccion;
 	private JLabel lblHeaderM;
@@ -95,6 +110,138 @@ public class Menu extends JFrame{
 		
 		historialUR = new JPanel();
 		historialUR.setVisible(false);
+		
+		dtdUR = new JPanel();
+		dtdUR.setVisible(false);
+		dtdUR.setBackground(SystemColor.activeCaption);
+		dtdUR.setBounds(0, 0, 816, 623);
+		layeredPanel.add(dtdUR);
+		dtdUR.setLayout(null);
+		
+		JLabel lblConfirmarExportacion = new JLabel("¿Estas seguro de exportar a XML?");
+		lblConfirmarExportacion.setFont(new Font("Tahoma", Font.BOLD, 30));
+		lblConfirmarExportacion.setHorizontalAlignment(SwingConstants.CENTER);
+		lblConfirmarExportacion.setBounds(0, 10, 816, 51);
+		dtdUR.add(lblConfirmarExportacion);
+		
+		JButton btnConfirmarExportacion = new JButton("Exportar");
+		btnConfirmarExportacion.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try (DataInputStream dis2 = new DataInputStream(new FileInputStream("src/img/historialUR.txt"))) {
+					String linea = dis2.readLine();
+					if (linea == null) {
+						JOptionPane.showMessageDialog(null, "No hay partidas para pasar a XML.");
+					} else {
+						DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+						DocumentBuilder db = dbf.newDocumentBuilder();
+						Document documento = db.newDocument();
+						Element root = documento.createElement("historial");
+
+						String[] partes;
+						String jugador1, jugador2, ganasOpierdes, resultado;
+						while (linea != null) {
+							partes = linea.split(" ");
+							jugador1 = partes[3];
+							jugador2 = partes[7];
+							ganasOpierdes = partes[5];
+							resultado = partes[1];
+							// Partida
+							Element partidaE = documento.createElement("partida");
+							// Jugador1
+							Element jugador1E = documento.createElement("jugador");
+							jugador1E.setTextContent(jugador1);
+							partidaE.appendChild(jugador1E);
+							// Jugador2
+							if(!jugador2.equals("CPU")) {
+							Element jugador2E = documento.createElement("jugador");
+							jugador2E.setTextContent(jugador2);
+							partidaE.appendChild(jugador2E);}else
+							// eraCPU opcional
+							{
+								Element cpuE = documento.createElement("vsCPU");
+								partidaE.appendChild(cpuE);
+							}
+							//
+							// Ganador
+							Element ganadorE = documento.createElement("ganador");
+							if (ganasOpierdes.equals("empatado")) {
+								ganadorE.setAttribute("empate", "si");
+							} else {
+								ganadorE.setAttribute("empate", "no");
+								if (ganasOpierdes.equals("ganado")) {
+									ganadorE.setTextContent(jugador1);
+								} else {
+									ganadorE.setTextContent(jugador2);
+								}
+
+							}
+							partidaE.appendChild(ganadorE);
+							//
+							// Resultado
+							Element resultadoE = documento.createElement("resultado");
+							resultadoE.setTextContent(resultado);
+							partidaE.appendChild(resultadoE);
+							//
+							// Le pasamos la partida al root
+							root.appendChild(partidaE);
+							linea = dis2.readLine();
+						}
+						documento.appendChild(root);
+
+						String pathXML = "src/img/historialUR.xml";
+						TransformerFactory transformerFactory = TransformerFactory.newInstance();
+						Transformer transformer = transformerFactory.newTransformer();
+						DOMSource source = new DOMSource(documento);
+						StreamResult result = new StreamResult(new File(pathXML));
+						transformer.transform(source, result);
+						JOptionPane.showMessageDialog(null, "XML exportado en " + pathXML);
+
+					}
+
+				} catch (ParserConfigurationException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (FileNotFoundException e2) {
+					// TODO Auto-generated catch block
+					e2.printStackTrace();
+				} catch (IOException e2) {
+					// TODO Auto-generated catch block
+					e2.printStackTrace();
+				} catch (TransformerException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+
+			}
+		});
+		btnConfirmarExportacion.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		btnConfirmarExportacion.setBounds(58, 544, 306, 51);
+		dtdUR.add(btnConfirmarExportacion);
+		
+		JButton btnVolverAtras = new JButton("Volver atrás");
+		btnVolverAtras.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				switchPanels(historialUR);
+			}
+		});
+		btnVolverAtras.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		btnVolverAtras.setBounds(445, 544, 306, 51);
+		dtdUR.add(btnVolverAtras);
+		
+		JScrollPane scrollPane_2 = new JScrollPane();
+		scrollPane_2.setBounds(58, 102, 696, 416);
+		dtdUR.add(scrollPane_2);
+		
+		JLabel lblDTD = new JLabel("El documento XML exportado cumplirá el siguiente DTD:");
+		lblDTD.setHorizontalAlignment(SwingConstants.CENTER);
+		lblDTD.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		lblDTD.setBounds(0, 59, 816, 25);
+		dtdUR.add(lblDTD);
+		
+		JTextPane textDtd = new JTextPane();
+		textDtd.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		textDtd.setBounds(0, 0, 7, 19);
+		scrollPane_2.setViewportView(textDtd);
 		
 		
 		inicioUR = new JPanel();
@@ -160,15 +307,40 @@ public class Menu extends JFrame{
 		lblHistorial.setBounds(0, 10, 816, 63);
 		historialUR.add(lblHistorial);
 		
-		JButton btnNewButton = new JButton("Volver al menú principal");
-		btnNewButton.addActionListener(new ActionListener() {
+		JButton btnVolverMenuH = new JButton("Volver al menú principal");
+		btnVolverMenuH.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				switchPanels(menuUR);
 			}
 		});
-		btnNewButton.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		btnNewButton.setBounds(249, 544, 306, 51);
-		historialUR.add(btnNewButton);
+		btnVolverMenuH.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		btnVolverMenuH.setBounds(445, 544, 306, 51);
+		historialUR.add(btnVolverMenuH);
+		
+		JButton btnExportarAXml = new JButton("Exportar a XML");
+		btnExportarAXml.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				switchPanels(dtdUR);
+				try(DataInputStream dis = new DataInputStream( new FileInputStream("src/img/historialUR.dtd"))){
+					String linea = dis.readLine();
+					String hist = "";
+					while(linea != null) {
+						hist = hist + linea + "\r\n";
+						linea=dis.readLine();
+					}
+					textDtd.setText(hist);
+				} catch (FileNotFoundException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+			}
+		});
+		btnExportarAXml.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		btnExportarAXml.setBounds(58, 544, 306, 51);
+		historialUR.add(btnExportarAXml);
 		menuUR.setBackground(SystemColor.activeCaption);
 		menuUR.setBounds(0, 0, 816, 623);
 		layeredPanel.add(menuUR);

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!ELEMENT historial (partida+)>
+<!ELEMENT partida (jugador+,vsCPU?,ganador,resultado)>
+<!ELEMENT jugador (#PCDATA)>
+<!ELEMENT vsCPU EMPTY>
+<!ELEMENT ganador (#PCDATA)>
+<!ATTLIST ganador empate (si|no) #REQUIRED>
+<!ELEMENT resultado (#PCDATA)>
