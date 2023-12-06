@@ -99,9 +99,6 @@ public class Menu extends JFrame{
 		personajeUR = new JPanel();
 		personajeUR.setVisible(false);
 		
-		conexionUR = new JPanel();
-		conexionUR.setVisible(false);
-		
 		JPanel crUR = new JPanel();
 		crUR.setVisible(false);
 		
@@ -113,6 +110,98 @@ public class Menu extends JFrame{
 		
 		dtdUR = new JPanel();
 		dtdUR.setVisible(false);
+		
+		conexionUR = new JPanel();
+		conexionUR.setVisible(false);
+		conexionUR.setBackground(SystemColor.activeCaption);
+		conexionUR.setBounds(0, 0, 816, 623);
+		layeredPanel.add(conexionUR);
+		conexionUR.setLayout(null);
+		
+		JLabel lblIntroduceIP = new JLabel("Introduce la ip a la que te quieres unir:");
+		lblIntroduceIP.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		lblIntroduceIP.setBounds(205, 205, 409, 60);
+		conexionUR.add(lblIntroduceIP);
+		
+		textIP = new JTextField();
+		textIP.setBounds(198, 264, 370, 38);
+		conexionUR.add(textIP);
+		textIP.setColumns(10);
+		
+		JButton btnConectar = new JButton("Conectar");
+		btnConectar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				try{
+					Socket s = new Socket(textIP.getText(),999);
+					PartidaMultijugador pmj = new PartidaMultijugador(s,nombre,seleccion,2);
+					pmj.setVisible(true);
+					pmj.toFront();
+					dispose();
+					
+				} catch (UnknownHostException e1) {
+					JOptionPane.showMessageDialog(null,"Conexión no válida");
+				} catch (IOException e2) {
+					JOptionPane.showMessageDialog(null,"Esta IP no está corriendo el juego");
+				}
+			}
+		});
+		btnConectar.setFont(new Font("Tahoma", Font.PLAIN, 25));
+		btnConectar.setBounds(273, 322, 223, 38);
+		conexionUR.add(btnConectar);
+		
+		JButton btnVolver = new JButton("Volver al menú principal");
+		btnVolver.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				switchPanels(menuUR);
+			}
+		});
+		btnVolver.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		btnVolver.setBounds(240, 458, 291, 48);
+		conexionUR.add(btnVolver);
+		
+		
+		inicioUR = new JPanel();
+		inicioUR.setBackground(SystemColor.activeCaption);
+		inicioUR.setBounds(0, 0, 816, 623);
+		layeredPanel.add(inicioUR);
+		inicioUR.setLayout(null);
+		
+		JLabel lbLIntroduce = new JLabel("Como quieres llamarte?");
+		lbLIntroduce.setFont(new Font("Tahoma", Font.PLAIN, 25));
+		lbLIntroduce.setBounds(70, 443, 353, 109);
+		inicioUR.add(lbLIntroduce);
+		
+		JLabel lblTitulo = new JLabel("ULTIMATE ROSHAMBO");
+		lblTitulo.setFont(new Font("Quintessential", Font.PLAIN, 52));
+		lblTitulo.setBounds(118, 359, 737, 144);
+		inicioUR.add(lblTitulo);
+		
+		JLabel Icono = new JLabel("New label");
+		Icono.setIcon(new ImageIcon(Menu.class.getResource("/img/rps-titulo-resize.png")));
+		Icono.setBounds(10, 28, 797, 370);
+		inicioUR.add(Icono);
+		
+		JTextPane textNombreUser = new JTextPane();
+		textNombreUser.setFont(new Font("Tahoma", Font.PLAIN, 20));
+		textNombreUser.setBounds(375, 484, 332, 28);
+		inicioUR.add(textNombreUser);
+		
+		JButton btnEntrar = new JButton("Entrar");
+		
+		
+		btnEntrar.setFont(new Font("Tahoma", Font.PLAIN, 25));
+		btnEntrar.setBounds(339, 541, 146, 47);
+		inicioUR.add(btnEntrar);
+		
+		btnEntrar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				if(textNombreUser.getText()!=null) {
+					nombre = textNombreUser.getText();
+				}
+				lblHeaderM.setText("Bienvenido " + nombre);
+				switchPanels(menuUR);
+			}
+		});
 		dtdUR.setBackground(SystemColor.activeCaption);
 		dtdUR.setBounds(0, 0, 816, 623);
 		layeredPanel.add(dtdUR);
@@ -242,50 +331,6 @@ public class Menu extends JFrame{
 		textDtd.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		textDtd.setBounds(0, 0, 7, 19);
 		scrollPane_2.setViewportView(textDtd);
-		
-		
-		inicioUR = new JPanel();
-		inicioUR.setBackground(SystemColor.activeCaption);
-		inicioUR.setBounds(0, 0, 816, 623);
-		layeredPanel.add(inicioUR);
-		inicioUR.setLayout(null);
-		
-		JLabel lbLIntroduce = new JLabel("Como quieres llamarte?");
-		lbLIntroduce.setFont(new Font("Tahoma", Font.PLAIN, 25));
-		lbLIntroduce.setBounds(70, 443, 353, 109);
-		inicioUR.add(lbLIntroduce);
-		
-		JLabel lblTitulo = new JLabel("ULTIMATE ROSHAMBO");
-		lblTitulo.setFont(new Font("Quintessential", Font.PLAIN, 52));
-		lblTitulo.setBounds(118, 359, 737, 144);
-		inicioUR.add(lblTitulo);
-		
-		JLabel Icono = new JLabel("New label");
-		Icono.setIcon(new ImageIcon(Menu.class.getResource("/img/rps-titulo-resize.png")));
-		Icono.setBounds(10, 28, 797, 370);
-		inicioUR.add(Icono);
-		
-		JTextPane textNombreUser = new JTextPane();
-		textNombreUser.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		textNombreUser.setBounds(375, 484, 332, 28);
-		inicioUR.add(textNombreUser);
-		
-		JButton btnEntrar = new JButton("Entrar");
-		
-		
-		btnEntrar.setFont(new Font("Tahoma", Font.PLAIN, 25));
-		btnEntrar.setBounds(339, 541, 146, 47);
-		inicioUR.add(btnEntrar);
-		
-		btnEntrar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				if(textNombreUser.getText()!=null) {
-					nombre = textNombreUser.getText();
-				}
-				lblHeaderM.setText("Bienvenido " + nombre);
-				switchPanels(menuUR);
-			}
-		});
 		historialUR.setBackground(SystemColor.activeCaption);
 		historialUR.setBounds(0, 0, 816, 623);
 		layeredPanel.add(historialUR);
@@ -386,7 +431,7 @@ public class Menu extends JFrame{
 		btnUnJugador.setEnabled(false);
 		btnUnJugador.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				PartidaUnJugador puj = new PartidaUnJugador();
+				PartidaUnJugador puj = new PartidaUnJugador(nombre,seleccion);
 				puj.setVisible(true);
 				puj.toFront();
 				dispose();
@@ -472,7 +517,7 @@ public class Menu extends JFrame{
 				switchPanels(esperaUR);
 				serv = new Thread(new Runnable() {public void run() {try(ServerSocket server = new ServerSocket(999)){
 						Socket s = server.accept();
-						PartidaMultijugador pmj = new PartidaMultijugador(s,nombre,seleccion);
+						PartidaMultijugador pmj = new PartidaMultijugador(s,nombre,seleccion,1);
 						pmj.setVisible(true);
 						pmj.toFront();
 						dispose();
@@ -506,51 +551,6 @@ public class Menu extends JFrame{
 		btnNewButton_1.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		btnNewButton_1.setBounds(247, 400, 292, 68);
 		crUR.add(btnNewButton_1);
-		conexionUR.setBackground(SystemColor.activeCaption);
-		conexionUR.setBounds(0, 0, 816, 623);
-		layeredPanel.add(conexionUR);
-		conexionUR.setLayout(null);
-		
-		JLabel lblIntroduceIP = new JLabel("Introduce la ip a la que te quieres unir:");
-		lblIntroduceIP.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		lblIntroduceIP.setBounds(205, 205, 409, 60);
-		conexionUR.add(lblIntroduceIP);
-		
-		textIP = new JTextField();
-		textIP.setBounds(198, 264, 370, 38);
-		conexionUR.add(textIP);
-		textIP.setColumns(10);
-		
-		JButton btnConectar = new JButton("Conectar");
-		btnConectar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				try{
-					Socket s = new Socket(textIP.getText(),999);
-					PartidaMultijugador pmj = new PartidaMultijugador(s,nombre,seleccion);
-					pmj.setVisible(true);
-					pmj.toFront();
-					dispose();
-					
-				} catch (UnknownHostException e1) {
-					JOptionPane.showMessageDialog(null,"Conexión no válida");
-				} catch (IOException e2) {
-					JOptionPane.showMessageDialog(null,"Esta IP no está corriendo el juego");
-				}
-			}
-		});
-		btnConectar.setFont(new Font("Tahoma", Font.PLAIN, 25));
-		btnConectar.setBounds(273, 322, 223, 38);
-		conexionUR.add(btnConectar);
-		
-		JButton btnVolver = new JButton("Volver al menú principal");
-		btnVolver.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				switchPanels(menuUR);
-			}
-		});
-		btnVolver.setFont(new Font("Tahoma", Font.PLAIN, 20));
-		btnVolver.setBounds(240, 458, 291, 48);
-		conexionUR.add(btnVolver);
 		
 		esperaUR = new JPanel();
 		esperaUR.setVisible(false);
@@ -685,19 +685,17 @@ public class Menu extends JFrame{
 				+ "**Glosario: P=Piedra;Pa=Papel;T=Tijeras**\r\n"
 				+ "The Rock/5P-1Pa-3T/Initiative\r\n"
 				+ "Gangan/2P-2Pa-5T/Comeback\r\n"
-				+ "Mapa/3P-5Pa-1T/Vitality\r\n"
-				+ "Nugget/4P-3Pa-2T/Endurance\r\n"
-				+ "Weathley Mamado/3P-3Pa-3T/DrawMaster\r\n"
+				+ "Mapa/3P-5Pa-1T/Initiative\r\n"
+				+ "Nugget/4P-3Pa-2T/Comeback\r\n"
+				+ "Weathley Mamado/3P-3Pa-3T/Initiative\r\n"
 				+ "—------------------------------------------------------------------------------------------------------------------------\r\n"
 				+ "Puntos con cada gesto:\r\n"
 				+ "El daño de cada gesto va ligado a los puntos expuestos arriba donde 5 puntos será el máximo daño y 1 el mínimo.\r\n"
 				+ "—------------------------------------------------------------------------------------------------------------------------\r\n"
 				+ "Habilidades pasivas:\r\n"
-				+ "Comeback - Cuando la barra le llega a 0 al jugador, te hace una instakill (9%)\r\n"
-				+ "Vitality - Recupera un 20% de vida en cualquier turno (15%)\r\n"
-				+ "Endurance - Cuando la barra le llega a 0 al jugador, se pondrá con 33 de vida (50%)\r\n"
-				+ "Initiative - Hace un golpe al empezar que quita un 20% (50% de probabilidades)\r\n"
-				+ "DrawMaster - En caso de empate, empieza con 5 clicks extra en el duelo por el desempate.\r\n"
+				+ "Comeback - Cuando la barra le llega a 0 al jugador, consigue empatar la partida (50%)\r\n"
+				+ "Initiative - Hace un golpe al empezar que quita un 20% (80% de probabilidades)\r\n"
+				+ "Si ambos jugadores activan esta habilidad, ganará el creador del server.\r\n"
 				+ "—------------------------------------------------------------------------------------------------------------------------\r\n"
 				+ "Colores Multiplicadores:\r\n"
 				+ "En cada ronda cada carta adquirirá un color que multiplicará al daño propio del gesto donde:\r\n"
@@ -763,13 +761,13 @@ public class Menu extends JFrame{
 			personajeAtributos("Gangan","2","2","5","Comeback","/img/gangan-resize.png");
 			break;
 		case 3:
-			personajeAtributos("El mapa","3","5","1","Vitality","/img/mapa-resize.png");
+			personajeAtributos("El mapa","3","5","1","Initiative","/img/mapa-resize.png");
 			break;
 		case 4:
-			personajeAtributos("Nugget","4","3","2","Endurance","/img/nugget-resize.png");
+			personajeAtributos("Nugget","4","3","2","Comeback","/img/nugget-resize.png");
 			break;
 		case 5:
-			personajeAtributos("Wheatley","3","3","3","DrawMaster","/img/wheatley-resize.png");
+			personajeAtributos("Wheatley","3","3","3","Initiative","/img/wheatley-resize.png");
 			break;
 		default:
 			personajeAtributos("The Rock","5","1","3","Initiative","/img/therock-resize.png");
@@ -826,19 +824,19 @@ public class Menu extends JFrame{
 		String nomImagenMenu = null;
 		switch(seleccion) {
 		case 1:
-			nomImagenMenu = "el calvo The Rock";
+			nomImagenMenu = "el invencible The Rock";
 			break;
 		case 2:
 			nomImagenMenu = "el mítico Gangan";
 			break;
 		case 3:
-			nomImagenMenu = "el fucking mapa";
+			nomImagenMenu = "el mapa";
 			break;
 		case 4:
 			nomImagenMenu = "el gerente Nugget";
 			break;
 		case 5:
-			nomImagenMenu = "el mamado Wheatley";
+			nomImagenMenu = "el cansino Wheatley";
 			break;
 		default:
 			nomImagenMenu = "el invencible The Rock";
