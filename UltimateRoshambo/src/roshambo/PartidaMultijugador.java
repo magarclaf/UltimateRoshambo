@@ -89,7 +89,7 @@ public class PartidaMultijugador extends JFrame{
 	
 	public PartidaMultijugador(Socket con, String nombreJ, int seleccion, int ladoJ) {
 		s=con;
-		
+		System.out.println(s.getInetAddress().getHostAddress());
 		lado=ladoJ;
 		PartidaMultijugador.nombre=nombreJ;
 		PartidaMultijugador.seleccion1=seleccion;
@@ -109,6 +109,11 @@ public class PartidaMultijugador extends JFrame{
 		try{
 		dos = new DataOutputStream(con.getOutputStream());
 		dis = new DataInputStream(con.getInputStream());
+		
+		dos.writeBytes(nombre+"\r\n");
+		dos.flush();
+		nombreRival=dis.readLine();
+		
 		
 		getContentPane().setLayout(null);
 		setResizable(false);
@@ -180,9 +185,9 @@ public class PartidaMultijugador extends JFrame{
 			public void actionPerformed(ActionEvent e) {
 				int cartaCPU=0;
 				try {
-					cartaCPU=Integer.parseInt(dis.readLine());
 					dos.writeInt(0);
 					dos.flush();
+					cartaCPU=dis.readInt();	
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -200,7 +205,7 @@ public class PartidaMultijugador extends JFrame{
 						vida1-=valorJugada1;
 						lblvida1_1.setText("Vida: "+vida1);
 						lblvida1_1_1.setText("Vida: "+vida1);
-						lblGanadorR.setText("Ganador: CPU");
+						lblGanadorR.setText("Ganador: " + nombre2);
 					} else {
 						ganador=true;
 						valorJugada1=listavaloresCartas[0]*listaMultiplicadores[0];
@@ -224,9 +229,9 @@ public class PartidaMultijugador extends JFrame{
 			public void actionPerformed(ActionEvent e) {
 				int cartaCPU=0;
 				try {
-					cartaCPU=Integer.parseInt(dis.readLine());
 					dos.writeInt(1);
 					dos.flush();
+					cartaCPU=dis.readInt();	
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -252,7 +257,7 @@ public class PartidaMultijugador extends JFrame{
 						vida1-=valorJugada1;
 						lblvida1_1.setText("Vida: "+vida1);
 						lblvida1_1_1.setText("Vida: "+vida1);
-						lblGanadorR.setText("Ganador: CPU");
+						lblGanadorR.setText("Ganador: " + nombre2);
 					}
 					
 				}
@@ -269,9 +274,9 @@ public class PartidaMultijugador extends JFrame{
 			public void actionPerformed(ActionEvent e) {
 				int cartaCPU=0;
 				try {
-					cartaCPU=Integer.parseInt(dis.readLine());
 					dos.writeInt(2);
 					dos.flush();
+					cartaCPU=dis.readInt();	
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -285,7 +290,7 @@ public class PartidaMultijugador extends JFrame{
 					vida1-=valorJugada1;
 					lblvida1_1.setText("Vida: "+vida1);
 					lblvida1_1_1.setText("Vida: "+vida1);
-					lblGanadorR.setText("Ganador: CPU");
+					lblGanadorR.setText("Ganador: " + nombre2);
 					
 				} else {
 					if (cartaCPU == 4) {
@@ -315,9 +320,9 @@ public class PartidaMultijugador extends JFrame{
 			public void actionPerformed(ActionEvent e) {
 				int cartaCPU=0;
 				try {
-					cartaCPU=Integer.parseInt(dis.readLine());
 					dos.writeInt(3);
 					dos.flush();
+					cartaCPU=dis.readInt();	
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -366,9 +371,9 @@ public class PartidaMultijugador extends JFrame{
 			public void actionPerformed(ActionEvent e) {
 				int cartaCPU=0;
 				try {
-					cartaCPU=Integer.parseInt(dis.readLine());
 					dos.writeInt(4);
 					dos.flush();
+					cartaCPU=dis.readInt();	
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -419,9 +424,9 @@ public class PartidaMultijugador extends JFrame{
 			public void actionPerformed(ActionEvent e) {
 				int cartaCPU=0;
 				try {
-					cartaCPU=Integer.parseInt(dis.readLine());
 					dos.writeInt(5);
 					dos.flush();
+					cartaCPU=dis.readInt();	
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -556,10 +561,10 @@ public class PartidaMultijugador extends JFrame{
 						result = "Resultado: " + 0 + "-" + vida2 + " - " + nombre + " has perdido contra " + nombre2;
 						JOptionPane.showMessageDialog(null, result);
 					} else {
-						result = "Resultado: " + 0 + "-" + 0 + " - " + nombre + " has empatado contra " + nombre2 + " porque "+ nombreHP + " ha usado Comeback.";
+						result = "Resultado: " + 0 + "-" + 0 + " - " + nombre + " has empatado contra " + nombre2 + " porque"+ nombreHP + " ha usado Comeback.";
 						JOptionPane.showMessageDialog(null, result);
 					}
-					dos.writeBytes(result+"\r\n");
+					if(lado==1) {dos.writeBytes(result+"\r\n");}
 					vida1=100;vida2=100;					
 					
 				} catch (FileNotFoundException e1) {
@@ -646,6 +651,11 @@ public class PartidaMultijugador extends JFrame{
 					switchPanels(terminarUR);
 				}else {
 					cambiarMultiplicador();
+					if(lado==1) {
+						envioMultiplicadores();
+					}else {
+						reciboMultiplicadores();
+					}
 					switchPanels(elegirCartaUR);
 				}
 			}
@@ -670,22 +680,17 @@ public class PartidaMultijugador extends JFrame{
 		btnEmpezar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				ladoJugador(lado);
-				
 				meterCartasEnLista();
 				try {
-					if(s.isClosed()) {
-						System.out.println("cerrado");
-					}else {System.out.println("no cerrado");}
-					dos.writeBytes(nombre+"\r\n");
-					dos.flush();
-					nombreRival=dis.readLine();
-					dos.writeInt(seleccion1);
+					dos.writeBytes(""+seleccion1+"\r\n");
 					dos.flush();
 					seleccionRival=dis.readLine();
 				} catch (IOException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
+				
+			
 				
 				
 					
@@ -708,6 +713,11 @@ public class PartidaMultijugador extends JFrame{
 				switchPanels(elegirCartaUR);
 				valoresCartas(seleccion1,seleccion2);
 				cambiarMultiplicador();
+				if(lado==1) {
+					envioMultiplicadores();
+				}else {
+					reciboMultiplicadores();
+				}
 				diseñoElegirCarta();
 				diseñoResultado();
 			}
@@ -726,9 +736,9 @@ public class PartidaMultijugador extends JFrame{
 		// TODO Auto-generated catch block
 		e2.printStackTrace();
 	}finally {
-		try {
-			con.close();
-		}catch(IOException e) {e.printStackTrace();}
+		/*try {
+			//con.close();
+		}catch(IOException e) {e.printStackTrace();}*/
 	}
 		
 	}
@@ -846,57 +856,6 @@ public class PartidaMultijugador extends JFrame{
 			}
 		}
 
-	}
-	
-	private int eleccionRandomJugadorCPU() {
-		double random = Math.random();// generamos un numero al azar entre 0 y 1
-		if (random < 0.2)
-		{
-			seleccion2=1;
-		}
-
-		else {
-			if (random < 0.4)
-			{
-				seleccion2=2;
-			} else {
-				if (random < 0.6)
-				{
-					seleccion2=3;
-				} 
-				else {
-					if (random < 0.8) { 
-						seleccion2=4;
-					} else { 
-						seleccion2=5;
-					}
-				}
-			}
-
-		}
-		
-		return seleccion2;
-	}
-	
-	private int eleccionRandomCartaCPU() {
-		double random = Math.random();// generamos un numero al azar entre 0 y 1
-		if (random < 0.33)
-		{
-			seleccion2=3;
-		}
-
-		else {
-			if (random < 0.66)
-			{
-				seleccion2=4;
-			} else {
-					seleccion2=5;
-				
-
-		}
-			}
-		
-		return seleccion2;
 	}
 	
 	private void meterCartasEnLista() {
@@ -1084,6 +1043,17 @@ public class PartidaMultijugador extends JFrame{
 			btnTijeras2.setEnabled(true);
 			
 		}
+	}
+	
+	private void envioMultiplicadores() {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	
+	private void reciboMultiplicadores() {
+		// TODO Auto-generated method stub
+		
 	}
 	
 
