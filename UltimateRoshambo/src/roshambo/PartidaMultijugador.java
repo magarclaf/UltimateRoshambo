@@ -89,7 +89,6 @@ public class PartidaMultijugador extends JFrame{
 	
 	public PartidaMultijugador(Socket con, String nombreJ, int seleccion, int ladoJ) {
 		s=con;
-		System.out.println(s.getInetAddress().getHostAddress());
 		lado=ladoJ;
 		PartidaMultijugador.nombre=nombreJ;
 		PartidaMultijugador.seleccion1=seleccion;
@@ -253,7 +252,7 @@ public class PartidaMultijugador extends JFrame{
 						
 					} else {
 						ganador=false;
-						valorJugada1=listavaloresCartas[4]*listaMultiplicadores[4];
+						valorJugada1=listavaloresCartas[5]*listaMultiplicadores[5];
 						vida1-=valorJugada1;
 						lblvida1_1.setText("Vida: "+vida1);
 						lblvida1_1_1.setText("Vida: "+vida1);
@@ -286,7 +285,7 @@ public class PartidaMultijugador extends JFrame{
 				lblCarta2.setIcon(new ImageIcon(PartidaUnJugador.class.getResource(urlC(cartaCPU))));
 				if (cartaCPU == 3) {
 					ganador=false;
-					valorJugada1=listavaloresCartas[4]*listaMultiplicadores[4];
+					valorJugada1=listavaloresCartas[3]*listaMultiplicadores[3];
 					vida1-=valorJugada1;
 					lblvida1_1.setText("Vida: "+vida1);
 					lblvida1_1_1.setText("Vida: "+vida1);
@@ -542,31 +541,42 @@ public class PartidaMultijugador extends JFrame{
 		btnTerminar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String nombreHP = "";
+				boolean comebackactivo=false;
 				if(seleccion1==2 || seleccion1==4) {
 					ejecutarPasivas(nombre,seleccion1,habilidadUsada1,1);
 					nombreHP=nombre;
+					comebackactivo=true;
 				}
 				if(seleccion2==2 || seleccion2==4) {
 					ejecutarPasivas(nombre2,seleccion2,habilidadUsada2,2);
 					nombreHP=nombre2;
+					comebackactivo = true;
 				}
-				File f=new File("src/img/historialUR.txt");
-				try(DataOutputStream dos = new DataOutputStream(new FileOutputStream(f,true))){
-					String result;				
-					if (vida2<0) {
-						result = "Resultado: " + vida1 + "-" + 0 + " - " + nombre + " has ganado contra " + nombre2;
+				File f = new File("src/img/historialUR.txt");
+				try (DataOutputStream dos = new DataOutputStream(new FileOutputStream(f, true))) {
+					String result;
+					if (vida2 <= 0 && !comebackactivo) {
+						result = "Resultado: " + vida1 + "-" + 0 + " - " + nombre + " ha ganado contra " + nombre2;
 						JOptionPane.showMessageDialog(null, result);
-						
-					} else if (vida1<0){
-						result = "Resultado: " + 0 + "-" + vida2 + " - " + nombre + " has perdido contra " + nombre2;
-						JOptionPane.showMessageDialog(null, result);
+
 					} else {
-						result = "Resultado: " + 0 + "-" + 0 + " - " + nombre + " has empatado contra " + nombre2 + " porque"+ nombreHP + " ha usado Comeback.";
-						JOptionPane.showMessageDialog(null, result);
+						if (vida1 <= 0 && !comebackactivo) {
+							result = "Resultado: " + 0 + "-" + vida2 + " - " + nombre + " ha perdido contra " + nombre2;
+							JOptionPane.showMessageDialog(null, result);
+						}
+
+						else {
+							result = "Resultado: " + 0 + "-" + 0 + " - " + nombre + " ha empatado contra " + nombre2
+									+ " porque " + nombreHP + " ha usado Comeback.";
+							JOptionPane.showMessageDialog(null, result);
+						}
 					}
-					if(lado==1) {dos.writeBytes(result+"\r\n");}
-					vida1=100;vida2=100;					
-					
+					if (lado == 1) {
+						dos.writeBytes(result + "\r\n");
+					}
+					vida1 = 100;
+					vida2 = 100;
+
 				} catch (FileNotFoundException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -697,6 +707,7 @@ public class PartidaMultijugador extends JFrame{
 				if(lado==1) {
 					nombre2=nombreRival;
 					seleccion2=Integer.parseInt(seleccionRival);
+					
 				}else {
 					nombre2=nombre;
 					seleccion2=seleccion1;
@@ -707,7 +718,7 @@ public class PartidaMultijugador extends JFrame{
 				if(seleccion1==1 || seleccion1==3 || seleccion1==5) {
 					ejecutarPasivas(nombre,seleccion1,habilidadUsada1,1);
 				}
-				if(seleccion2==1 || seleccion2==3 || seleccion2==5) {
+				if((seleccion2==1 || seleccion2==3 || seleccion2==5) && !habilidadUsada1) {
 					ejecutarPasivas(nombre2,seleccion2,habilidadUsada2,2);
 				}
 				switchPanels(elegirCartaUR);
@@ -715,8 +726,10 @@ public class PartidaMultijugador extends JFrame{
 				cambiarMultiplicador();
 				if(lado==1) {
 					envioMultiplicadores();
+					lbljugadorR2.setText(nombre2);
 				}else {
 					reciboMultiplicadores();
+					lbljugadorR2.setText(nombre);
 				}
 				diseñoElegirCarta();
 				diseñoResultado();
@@ -881,10 +894,12 @@ public class PartidaMultijugador extends JFrame{
 				if(i==1) {
 					vida2-=20;
 					lblvida12_1.setText("Vida: "+vida2);
+					lblvida2.setText("Vida: "+vida2);
 					habilidadUsada1=true;
 				}else {
 					vida1-=20;
 					lblvida1_1.setText("Vida: "+vida1);
+					lblvida1_1_1.setText("Vida: "+vida1);
 					habilidadUsada2=true;
 				}
 				lblInformacion.setText(nombre+" ha usado Initiative. Elige una carta:");
@@ -1047,15 +1062,54 @@ public class PartidaMultijugador extends JFrame{
 	
 	private void envioMultiplicadores() {
 		// TODO Auto-generated method stub
-		
-	}
-	
+		for (int i = 0; i < 6; i++) {
+			try {
+				dos.writeInt(listaMultiplicadores[i]);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	}	
 	
 	private void reciboMultiplicadores() {
 		// TODO Auto-generated method stub
-		
+		for (int i = 0; i < 6; i++) {
+			try {
+				int numero=dis.readInt();
+				listaMultiplicadores[i]=numero;
+				cambiarColorCarta(i,numero);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 	
+
+	private void cambiarColorCarta(int i, int numero) {
+		// TODO Auto-generated method stub
+		switch(numero) {
+		case 2:
+			listaCartas[i].setBackground(Color.WHITE);
+			break;
+		case 4:
+			listaCartas[i].setBackground(Color.BLUE);
+			break;
+		case 6:
+			listaCartas[i].setBackground(Color.GREEN);
+			break;
+		case 8:
+			listaCartas[i].setBackground(Color.RED);
+			break;
+		case 10:
+			listaCartas[i].setBackground(Color.YELLOW);
+			break;
+		default:
+			listaCartas[i].setBackground(Color.WHITE);
+			break;
+		}
+	}
 
 	public void switchPanels(JPanel jp) {
 
