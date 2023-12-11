@@ -43,6 +43,8 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import javax.swing.BoxLayout;
 import javax.swing.Icon;
@@ -76,7 +78,7 @@ public class Menu extends JFrame{
 	private JLabel lblImgPersonaje;
 	private JLabel lblImgM;
 	private JTextPane textHistorial;
-	private Thread serv;
+	private ExecutorService pool;
 	
 	public Menu() {
 		setResizable(false);
@@ -511,21 +513,31 @@ public class Menu extends JFrame{
 		lblCrearUnirse.setBounds(0, 32, 816, 95);
 		crUR.add(lblCrearUnirse);
 		
+		pool = Executors.newCachedThreadPool();
 		JButton btnCrear = new JButton("Crear");
 		btnCrear.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				switchPanels(esperaUR);
-				serv = new Thread(new Runnable() {public void run() {try(ServerSocket server = new ServerSocket(999)){
-						Socket s = server.accept();
-						PartidaMultijugador pmj = new PartidaMultijugador(s,nombre,seleccion,1);
-						pmj.setVisible(true);
-						pmj.toFront();
-						dispose();
-					
-					} catch (IOException e2) {
-						e2.printStackTrace();
-					}}});
-				serv.start();
+				pool.execute(new Runnable() {
+					public void run() {
+						try (ServerSocket server = new ServerSocket(999)) {
+							while (true) {
+								try {
+									Socket s = server.accept();
+									PartidaMultijugador pmj = new PartidaMultijugador(s, nombre, seleccion, 1);
+									pmj.setVisible(true);
+									pmj.toFront();
+									dispose();
+								} catch (IOException e) {
+									e.printStackTrace();
+								}
+							}
+						} catch (IOException e2) {
+							e2.printStackTrace();
+							pool.shutdown();
+						}
+					}
+				});
 			}
 		});
 		btnCrear.setFont(new Font("Tahoma", Font.BOLD, 40));
@@ -696,6 +708,7 @@ public class Menu extends JFrame{
 				+ "Comeback - Cuando la barra le llega a 0 al jugador, consigue empatar la partida (50%)\r\n"
 				+ "Initiative - Hace un golpe al empezar que quita un 20% (80% de probabilidades)\r\n"
 				+ "Si ambos jugadores activan esta habilidad, ganará el creador del server.\r\n"
+				+ "En partida contra la CPU si que ambos jugadores pueden activar la habilidad a la vez.\r\n"
 				+ "—------------------------------------------------------------------------------------------------------------------------\r\n"
 				+ "Colores Multiplicadores:\r\n"
 				+ "En cada ronda cada carta adquirirá un color que multiplicará al daño propio del gesto donde:\r\n"
