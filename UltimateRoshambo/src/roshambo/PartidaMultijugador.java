@@ -7,13 +7,13 @@ import javax.swing.JButton;
 import javax.swing.ImageIcon;
 import java.awt.Color;
 import java.awt.EventQueue;
-
-import javax.swing.UIManager;
+import javax.swing.WindowConstants;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -24,6 +24,7 @@ import javax.swing.JPanel;
 import java.awt.SystemColor;
 import javax.swing.SwingConstants;
 import java.awt.Font;
+import java.awt.HeadlessException;
 
 public class PartidaMultijugador extends JFrame{
 	private static Socket s;
@@ -41,14 +42,9 @@ public class PartidaMultijugador extends JFrame{
 	private String nombre2;
 	private int vida1;
 	private int vida2;
-	private int clicks1;
-	private int clicks2;
 	private boolean habilidadUsada1;
 	private boolean habilidadUsada2;
 	private int valorJugada1;
-	private int valorJugada2;
-	private int cartaJugada1;
-	private int cartaJugada2;
 	private boolean ganador;
 	private static int lado;
 	private JButton btnPiedra1;
@@ -97,8 +93,6 @@ public class PartidaMultijugador extends JFrame{
 		listaMultiplicadores = new int[6];
 		vida1=100;
 		vida2=100;
-		clicks1=0;
-		clicks2=0;
 		habilidadUsada1=false;
 		habilidadUsada2=false;
 		ganador=false;
@@ -402,7 +396,7 @@ public class PartidaMultijugador extends JFrame{
 						vida2-=valorJugada1;
 						lblvida12_1.setText("Vida: "+vida2);
 						lblvida2.setText("Vida: "+vida2);
-						lblGanadorR.setText("Ganador:" + nombre);
+						lblGanadorR.setText("Ganador: " + nombre);
 						
 						
 						
@@ -439,7 +433,7 @@ public class PartidaMultijugador extends JFrame{
 					vida2-=valorJugada1;
 					lblvida12_1.setText("Vida: "+vida2);
 					lblvida2.setText("Vida: "+vida2);
-					lblGanadorR.setText("Ganador:" + nombre);
+					lblGanadorR.setText("Ganador: " + nombre);
 					
 					
 				} else {
@@ -536,53 +530,64 @@ public class PartidaMultijugador extends JFrame{
 		terminarUR.setBackground(SystemColor.activeCaption);
 		terminarUR.setBounds(0, 0, 758, 565);
 		layeredPanel.add(terminarUR);
-		
+
 		JButton btnTerminar = new JButton("Terminar");
 		btnTerminar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				String nombreHP = "";
-				boolean comebackactivo=false;
-				if(seleccion1==2 || seleccion1==4) {
-					ejecutarPasivas(nombre,seleccion1,habilidadUsada1,1);
-					nombreHP=nombre;
-					comebackactivo=true;
-				}
-				if(seleccion2==2 || seleccion2==4) {
-					ejecutarPasivas(nombre2,seleccion2,habilidadUsada2,2);
-					nombreHP=nombre2;
-					comebackactivo = true;
-				}
-				File f = new File("src/img/historialUR.txt");
-				try (DataOutputStream dos = new DataOutputStream(new FileOutputStream(f, true))) {
-					String result;
-					if (vida2 <= 0 && !comebackactivo) {
-						result = "Resultado: " + vida1 + "-" + 0 + " - " + nombre + " ha ganado contra " + nombre2;
-						JOptionPane.showMessageDialog(null, result);
-
-					} else {
-						if (vida1 <= 0 && !comebackactivo) {
-							result = "Resultado: " + 0 + "-" + vida2 + " - " + nombre + " ha perdido contra " + nombre2;
-							JOptionPane.showMessageDialog(null, result);
-						}
-
-						else {
-							result = "Resultado: " + 0 + "-" + 0 + " - " + nombre + " ha empatado contra " + nombre2
-									+ " porque " + nombreHP + " ha usado Comeback.";
-							JOptionPane.showMessageDialog(null, result);
-						}
+				if (lado == 1) {
+					String nombreHP = "";
+					if (vida1 <= 0 && (seleccion1 == 2 || seleccion1 == 4)) {
+						ejecutarPasivas(nombre, seleccion1, habilidadUsada1, 1);
+						nombreHP = nombre;
 					}
-					if (lado == 1) {
-						dos.writeBytes(result + "\r\n");
+					if (vida2 <= 0 && (seleccion2 == 2 || seleccion2 == 4)) {
+						ejecutarPasivas(nombre2, seleccion2, habilidadUsada2, 2);
+						nombreHP = nombre2;
 					}
-					vida1 = 100;
-					vida2 = 100;
+					File f = new File("src/img/historialUR.txt");
+					try (DataOutputStream dos2 = new DataOutputStream(new FileOutputStream(f, true))) {
+						String result;
+						if (vida2 <= 0) {
+							result = "Resultado: " + vida1 + "-" + 0 + " - " + nombre + " ha ganado contra " + nombre2;
+							JOptionPane.showMessageDialog(null, result);
 
-				} catch (FileNotFoundException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
+						} else {
+							if (vida1 <= 0) {
+								result = "Resultado: " + 0 + "-" + vida2 + " - " + nombre + " ha perdido contra "
+										+ nombre2;
+								JOptionPane.showMessageDialog(null, result);
+							}
+
+							else {
+								result = "Resultado: " + 0 + "-" + 0 + " - " + nombre + " ha empatado contra " + nombre2
+										+ " porque " + nombreHP + " ha usado Comeback.";
+								JOptionPane.showMessageDialog(null, result);
+							}
+						}
+						if (lado == 1) {
+							dos2.writeBytes(result + "\r\n");
+							PartidaMultijugador.dos.writeBytes(result + "\r\n");
+						}
+						dispose();
+
+					} catch (FileNotFoundException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				} else {
+					try {
+						JOptionPane.showMessageDialog(null, dis.readLine());
+						dispose();
+					} catch (HeadlessException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 				}
 			}
 		});
@@ -699,27 +704,45 @@ public class PartidaMultijugador extends JFrame{
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
 				}
-				
-			
-				
-				
 					
 				if(lado==1) {
 					nombre2=nombreRival;
 					seleccion2=Integer.parseInt(seleccionRival);
-					
+					if(seleccion1==1 || seleccion1==3 || seleccion1==5) {
+						ejecutarPasivas(nombre,seleccion1,habilidadUsada1,1);
+					}
+					if((seleccion2==1 || seleccion2==3 || seleccion2==5) && !habilidadUsada1) {
+						ejecutarPasivas(nombre2,seleccion2,habilidadUsada2,2);
+					}
+					try {
+						if (habilidadUsada1) {
+							dos.writeInt(1);
+						}else {
+							if (habilidadUsada2) {
+								dos.writeInt(2);
+							} else {
+								dos.writeInt(0);
+							}
+						}
+						dos.flush();
+						
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+
 				}else {
 					nombre2=nombre;
 					seleccion2=seleccion1;
 					nombre=nombreRival;
 					seleccion1=Integer.parseInt(seleccionRival);
-				}
-				
-				if(seleccion1==1 || seleccion1==3 || seleccion1==5) {
-					ejecutarPasivas(nombre,seleccion1,habilidadUsada1,1);
-				}
-				if((seleccion2==1 || seleccion2==3 || seleccion2==5) && !habilidadUsada1) {
-					ejecutarPasivas(nombre2,seleccion2,habilidadUsada2,2);
+					try {
+						pasivaInitiative(dis.readInt());
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+					
 				}
 				switchPanels(elegirCartaUR);
 				valoresCartas(seleccion1,seleccion2);
@@ -735,10 +758,38 @@ public class PartidaMultijugador extends JFrame{
 				diseñoResultado();
 			}
 
+
 			
 
 
 		});
+		
+		this.addWindowListener(new WindowAdapter() {
+            public void windowClosing(WindowEvent e) {
+                try {
+                    dispose();
+                    String aux2 = "";
+                    while(!aux2.equals("Desconexión")) {
+                    	aux2 = dis.readLine();
+                    	dos.writeBytes("Desconexión\r\n");
+                    	dos.flush();
+                    }
+                    setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+                } catch (IOException ioe) {
+                    ioe.printStackTrace();
+                } finally {
+                    try {
+                        dos.close();
+                        dis.close();
+                        s.close();
+                    } catch (IOException ioe) {
+                        ioe.printStackTrace();
+                    }
+
+                }
+            }
+        });
+		
 		btnEmpezar.setFont(new Font("Tahoma", Font.PLAIN, 30));
 		btnEmpezar.setBounds(217, 228, 296, 90);
 		empezarUR.add(btnEmpezar);
@@ -748,10 +799,6 @@ public class PartidaMultijugador extends JFrame{
 	} catch (IOException e2) {
 		// TODO Auto-generated catch block
 		e2.printStackTrace();
-	}finally {
-		/*try {
-			//con.close();
-		}catch(IOException e) {e.printStackTrace();}*/
 	}
 		
 	}
@@ -911,12 +958,12 @@ public class PartidaMultijugador extends JFrame{
 		case 4:
 			if(random<0.5 && !habilidad) {
 				if(i==1) {
-					vida1=0;
-					vida2=0;
+					vida1=1;
+					vida2=1;
 					habilidadUsada1=true;
 				}else {
-					vida2=0;
-					vida1=0;
+					vida2=1;
+					vida1=1;
 					habilidadUsada2=true;
 				}
 				
@@ -1110,7 +1157,28 @@ public class PartidaMultijugador extends JFrame{
 			break;
 		}
 	}
-
+	
+	private void pasivaInitiative(int readInt) {
+		// TODO Auto-generated method stub
+		switch(readInt) {
+		case 1:
+			vida2-=20;
+			lblvida12_1.setText("Vida: "+vida2);
+			lblvida2.setText("Vida: "+vida2);
+			habilidadUsada1=true;
+			lblInformacion.setText(nombre+" ha usado Initiative. Elige una carta:");
+			break;
+		case 2:
+			vida1-=20;
+			lblvida1_1.setText("Vida: "+vida1);
+			lblvida1_1_1.setText("Vida: "+vida1);
+			habilidadUsada2=true;
+			lblInformacion.setText(nombre2+" ha usado Initiative. Elige una carta:");
+			break;
+		case 0:
+			break;
+		}
+	}
 	public void switchPanels(JPanel jp) {
 
 		jp.setVisible(true);

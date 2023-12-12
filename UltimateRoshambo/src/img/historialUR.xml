@@ -1,1 +1,153 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><historial><partida><jugador>lll</jugador><vsCPU/><ganador empate="no">lll</ganador><resultado>100-0</resultado></partida><partida><jugador>Cuntanda</jugador><vsCPU/><ganador empate="si"/><resultado>0-0</resultado></partida></historial>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<historial>
+	<partida>
+		<jugador>Mateo</jugador>
+		<jugador>Calvi</jugador>
+		<ganador empate="si" />
+		<resultado>0-0</resultado>
+	</partida>
+	<partida>
+		<jugador>Mateo</jugador>
+		<jugador>Calvi</jugador>
+		<ganador empate="si" />
+		<resultado>0-0</resultado>
+	</partida>
+	<partida>
+		<jugador>sggrwbfgdaebg&lt;dfg</jugador>
+		<jugador>bb</jugador>
+		<ganador empate="no">sggrwbfgdaebg&lt;dfg</ganador>
+		<resultado>100-0</resultado>
+	</partida>
+	<partida>
+		<jugador>dfdfvrwg</jugador>
+		<jugador>sfbebfea</jugador>
+		<ganador empate="si" />
+		<resultado>0-0</resultado>
+	</partida>
+	<partida>
+		<jugador>Ron</jugador>
+		<jugador>Estonia</jugador>
+		<ganador empate="no">Estonia</ganador>
+		<resultado>0-80</resultado>
+	</partida>
+	<partida>
+		<jugador>Ron</jugador>
+		<jugador>Roshambo</jugador>
+		<ganador empate="si" />
+		<resultado>0-0</resultado>
+	</partida>
+	<partida>
+		<jugador>España</jugador>
+		<jugador>Croacia</jugador>
+		<ganador empate="si" />
+		<resultado>0-0</resultado>
+	</partida>
+	<partida>
+		<jugador>España</jugador>
+		<jugador>Escocia</jugador>
+		<ganador empate="si" />
+		<resultado>0-0</resultado>
+	</partida>
+	<partida>
+		<jugador>Escocia</jugador>
+		<jugador>Estonia</jugador>
+		<ganador empate="si" />
+		<resultado>0-0</resultado>
+	</partida>
+	<partida>
+		<jugador />
+		<vsCPU />
+		<ganador empate="no" />
+		<resultado>88-0</resultado>
+	</partida>
+	<partida>
+		<jugador />
+		<vsCPU />
+		<ganador empate="si" />
+		<resultado>0-0</resultado>
+	</partida>
+	<partida>
+		<jugador>sadads</jugador>
+		<vsCPU />
+		<ganador empate="si" />
+		<resultado>0-0</resultado>
+	</partida>
+	<partida>
+		<jugador>Escocia</jugador>
+		<jugador>Ros</jugador>
+		<ganador empate="no">Escocia</ganador>
+		<resultado>70-0</resultado>
+	</partida>
+	<partida>
+		<jugador>aergdsfa</jugador>
+		<jugador>asdasdasdasdasdasd</jugador>
+		<ganador empate="si" />
+		<resultado>0-0</resultado>
+	</partida>
+	<partida>
+		<jugador>ff</jugador>
+		<jugador>ffff</jugador>
+		<ganador empate="si" />
+		<resultado>0-0</resultado>
+	</partida>
+	<partida>
+		<jugador>gg</jugador>
+		<jugador>hh</jugador>
+		<ganador empate="no">gg</ganador>
+		<resultado>62-0</resultado>
+	</partida>
+	<partida>
+		<jugador>sdfsdf</jugador>
+		<jugador>erfqgrbg</jugador>
+		<ganador empate="si" />
+		<resultado>0-0</resultado>
+	</partida>
+	<partida>
+		<jugador>uu</jugador>
+		<jugador>españa</jugador>
+		<ganador empate="no">españa</ganador>
+		<resultado>0-60</resultado>
+	</partida>
+	<partida>
+		<jugador>aXSCDVFBGNHG</jugador>
+		<jugador>Aswdefvgrbnhmj,hjkjl.kl,-.</jugador>
+		<ganador empate="no">Aswdefvgrbnhmj,hjkjl.kl,-.</ganador>
+		<resultado>0-100</resultado>
+	</partida>
+	<partida>
+		<jugador>asfdgsbfhndg</jugador>
+		<jugador>akk</jugador>
+		<ganador empate="no">akk</ganador>
+		<resultado>0-36</resultado>
+	</partida>
+	<partida>
+		<jugador>gg</jugador>
+		<jugador>hh</jugador>
+		<ganador empate="si" />
+		<resultado>0-0</resultado>
+	</partida>
+	<partida>
+		<jugador>asdcfvbdgf</jugador>
+		<jugador>aSSAVDFB</jugador>
+		<ganador empate="si" />
+		<resultado>0-0</resultado>
+	</partida>
+	<partida>
+		<jugador>España</jugador>
+		<jugador>Escocia</jugador>
+		<ganador empate="no">Escocia</ganador>
+		<resultado>0-90</resultado>
+	</partida>
+	<partida>
+		<jugador>dasfasd</jugador>
+		<jugador> qwqwefgrthbrnhffnhgd</jugador>
+		<ganador empate="no"> qwqwefgrthbrnhffnhgd</ganador>
+		<resultado>0-40</resultado>
+	</partida>
+	<partida>
+		<jugador>España</jugador>
+		<jugador>hh</jugador>
+		<ganador empate="no">España</ganador>
+		<resultado>70-0</resultado>
+	</partida>
+</historial>

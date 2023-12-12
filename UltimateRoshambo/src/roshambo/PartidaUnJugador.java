@@ -7,13 +7,9 @@ import javax.swing.JButton;
 import javax.swing.ImageIcon;
 import java.awt.Color;
 import java.awt.EventQueue;
-
-import javax.swing.UIManager;
 import java.awt.event.ActionListener;
-import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -39,14 +35,9 @@ public class PartidaUnJugador extends JFrame{
 	private String nombre2;
 	private int vida1;
 	private int vida2;
-	private int clicks1;
-	private int clicks2;
 	private boolean habilidadUsada1;
 	private boolean habilidadUsada2;
 	private int valorJugada1;
-	private int valorJugada2;
-	private int cartaJugada1;
-	private int cartaJugada2;
 	private boolean ganador;
 	private JButton btnPiedra1;
 	private JButton btnPapel1;
@@ -86,8 +77,6 @@ public class PartidaUnJugador extends JFrame{
 		listaMultiplicadores = new int[6];
 		vida1=100;
 		vida2=100;
-		clicks1=0;
-		clicks2=0;
 		habilidadUsada1=false;
 		habilidadUsada2=false;
 		ganador=false;
@@ -358,22 +347,22 @@ public class PartidaUnJugador extends JFrame{
 		btnTerminar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				String nombreHP = "";
-				if(seleccion1==2 || seleccion1==4) {
+				if(vida1<=0 && (seleccion1==2 || seleccion1==4)) {
 					ejecutarPasivas(nombre,seleccion1,habilidadUsada1,1);
 					nombreHP=nombre;
 				}
-				if(seleccion2==2 || seleccion2==4) {
+				if(vida2<=0 && (seleccion2==2 || seleccion2==4)) {
 					ejecutarPasivas(nombre2,seleccion2,habilidadUsada2,2);
 					nombreHP=nombre2;
 				}
 				File f=new File("src/img/historialUR.txt");
 				try(DataOutputStream dos = new DataOutputStream(new FileOutputStream(f,true))){
 					String result;				
-					if (vida2<0) {
+					if (vida2<=0) {
 						result = "Resultado: " + vida1 + "-" + 0 + " - " + nombre + " has ganado contra " + nombre2;
 						JOptionPane.showMessageDialog(null, result);
 						
-					} else if (vida1<0){
+					} else if (vida1<=0){
 						result = "Resultado: " + 0 + "-" + vida2 + " - " + nombre + " has perdido contra " + nombre2;
 						JOptionPane.showMessageDialog(null, result);
 					} else {
@@ -381,7 +370,8 @@ public class PartidaUnJugador extends JFrame{
 						JOptionPane.showMessageDialog(null, result);
 					}
 					dos.writeBytes(result+"\r\n");
-					vida1=100;vida2=100;					
+					vida1=100;vida2=100;
+					dispose();
 					
 				} catch (FileNotFoundException e1) {
 					// TODO Auto-generated catch block
@@ -514,6 +504,8 @@ public class PartidaUnJugador extends JFrame{
 		
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 770, 600);
+		
+		
 		
 		
 	}
@@ -707,10 +699,12 @@ public class PartidaUnJugador extends JFrame{
 				if(i==1) {
 					vida2-=20;
 					lblvida12_1.setText("Vida: "+vida2);
+					lblvida2.setText("Vida: "+vida2);
 					habilidadUsada1=true;
 				}else {
 					vida1-=20;
 					lblvida1_1.setText("Vida: "+vida1);
+					lblvida1_1_1.setText("Vida: "+vida1);
 					habilidadUsada2=true;
 				}
 				lblInformacion.setText(nombre+" ha usado Initiative. Elige una carta:");
@@ -722,12 +716,12 @@ public class PartidaUnJugador extends JFrame{
 		case 4:
 			if(random<0.5 && !habilidad) {
 				if(i==1) {
-					vida1=0;
-					vida2=0;
+					vida1=1;
+					vida2=1;
 					habilidadUsada1=true;
 				}else {
-					vida2=0;
-					vida1=0;
+					vida2=1;
+					vida1=1;
 					habilidadUsada2=true;
 				}
 				
@@ -862,6 +856,8 @@ public class PartidaUnJugador extends JFrame{
 		layeredPanel.revalidate();
 
 	}
+	
+	
 	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {

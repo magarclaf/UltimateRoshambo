@@ -1,15 +1,11 @@
 package roshambo;
 
 import java.awt.EventQueue;
-
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JOptionPane;
-
-import java.awt.BorderLayout;
 import java.awt.Color;
-
 import javax.swing.ImageIcon;
 import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
@@ -21,20 +17,15 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
 import javax.swing.JPanel;
-import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.SystemColor;
 import javax.swing.JButton;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JTextPane;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -45,9 +36,6 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import javax.swing.BoxLayout;
-import javax.swing.Icon;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.JTextField;
@@ -56,7 +44,6 @@ import javax.swing.JTextField;
 public class Menu extends JFrame{
 	
 	private String nombre;
-	private JPanel inicio;
 	private JPanel contentPane;
 	private JLayeredPane layeredPanel;
 	private JPanel inicioUR;
@@ -67,7 +54,6 @@ public class Menu extends JFrame{
 	private JPanel esperaUR;
 	private JPanel conexionUR;
 	private JPanel dtdUR;
-	private int personaje;
 	private int seleccion;
 	private JLabel lblHeaderM;
 	private JLabel lblPiedra;
@@ -690,7 +676,6 @@ public class Menu extends JFrame{
 		textReglas.setBounds(33, 85, 588, 478);
 		textReglas.setText("Cómo jugar: Enfrentamiento piedra-papel-tijeras con mecánicas. \r\n"
 				+ "Gana el que deja a su rival a 0 puntos de vida.\r\nPara dejar a 0 de vida a tu rival debes ganar duelos en donde le quitarás unos puntos de vida determinados a tu rival. Estos seguirán produciéndose mientras ninguno de los dos combatientes haya alcanzado 0 puntos de vida.\r\n"
-				+ "Las dos formas de ganar duelos: Ganando el piedra-papel-tijera directamente o ganando un duelo por el desempate cuando ambos saqueis el mismo gesto clicando un botón que aparecerá por pantalla.\r\n"
 				+ "Además los jugadores deberán elegir personajes para jugar partidas con sus correspondientes habilidades expuestas a continuación.\r\n"
 				+ "—------------------------------------------------------------------------------------------------------------------------\r\n"
 				+ "Personajes:\r\n"
@@ -711,9 +696,8 @@ public class Menu extends JFrame{
 				+ "En partida contra la CPU si que ambos jugadores pueden activar la habilidad a la vez.\r\n"
 				+ "—------------------------------------------------------------------------------------------------------------------------\r\n"
 				+ "Colores Multiplicadores:\r\n"
-				+ "En cada ronda cada carta adquirirá un color que multiplicará al daño propio del gesto donde:\r\n"
+				+ "En cada ronda, cada carta adquirirá un color que multiplicará el daño propio del gesto donde:\r\n"
 				+ "Dorado > Rojo > Verde > Azul > Blanco\r\n"
-				+ "Si ganas una ronda con un gesto dorado tendrás la opción de ocasionar más daño clicando un botón que te aparecerá en la pantalla.\r\n"
 				+ "—------------------------------------------------------------------------------------------------------------------------\r\n"
 				+ "");
 		
