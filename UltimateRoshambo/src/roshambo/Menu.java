@@ -183,11 +183,12 @@ public class Menu extends JFrame{
 		
 		btnEntrar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				if(textNombreUser.getText()!=null) {
+				if(!textNombreUser.getText().isBlank() && !textNombreUser.getText().isEmpty()) {
 					nombre = textNombreUser.getText();
-				}
-				lblHeaderM.setText("Bienvenido " + nombre);
-				switchPanels(menuUR);
+					lblHeaderM.setText("Bienvenido " + nombre);
+					switchPanels(menuUR);
+				}else {JOptionPane.showMessageDialog(null, "No has puesto ningún nombre.");}
+				
 			}
 		});
 		dtdUR.setBackground(SystemColor.activeCaption);
