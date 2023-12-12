@@ -1179,6 +1179,7 @@ public class PartidaMultijugador extends JFrame{
 			break;
 		}
 	}
+	
 	public void switchPanels(JPanel jp) {
 
 		jp.setVisible(true);
