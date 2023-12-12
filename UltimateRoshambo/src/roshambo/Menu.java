@@ -124,7 +124,7 @@ public class Menu extends JFrame{
 					PartidaMultijugador pmj = new PartidaMultijugador(s,nombre,seleccion,2);
 					pmj.setVisible(true);
 					pmj.toFront();
-					dispose();
+					switchPanels(menuUR);
 					
 				} catch (UnknownHostException e1) {
 					JOptionPane.showMessageDialog(null,"Conexión no válida");
@@ -507,21 +507,19 @@ public class Menu extends JFrame{
 				pool.execute(new Runnable() {
 					public void run() {
 						try (ServerSocket server = new ServerSocket(999)) {
-							while (true) {
 								try {
 									Socket s = server.accept();
 									PartidaMultijugador pmj = new PartidaMultijugador(s, nombre, seleccion, 1);
 									pmj.setVisible(true);
 									pmj.toFront();
-									dispose();
 								} catch (IOException e) {
 									e.printStackTrace();
 								}
-							}
 						} catch (IOException e2) {
 							e2.printStackTrace();
 							pool.shutdown();
 						}
+						switchPanels(menuUR);
 					}
 				});
 			}
@@ -842,3 +840,4 @@ public class Menu extends JFrame{
 		return nomImagenMenu;
 	}
 }
+
